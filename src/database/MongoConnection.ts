@@ -1,7 +1,7 @@
 require('dotenv').config();
 import mongoose from 'mongoose';
 
-const connectionString = process.env.MONGO_CONNECTION;
+const connectionString = String(process.env.MONGO_CONNECTION);
 
 class MongoConnection {
 	public async connect(): Promise<void> {

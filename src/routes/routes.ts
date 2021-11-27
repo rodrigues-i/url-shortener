@@ -1,26 +1,39 @@
 require('dotenv').config();
 import Router, { Request, Response } from 'express';
 import shortId from 'shortid';
+import { URLModel } from "../database/model/URL";
 
 const route = Router();
 
 const hostname = process.env.HOSTNAME;
 const port = process.env.PORT;
 
-route.post('/shorten', (req: Request, res: Response) => {
-	const { originalUrl } = req.body;
+route.post('/shorten', async (req: Request, res: Response) => {
+	const { originalURL } = req.body;
+	const url = await URLModel.findOne({ originalURL });
+
+	if(url) {
+		res.json(url);
+		return
+	}
 
 	const hash = shortId.generate();
-	const shorterUrl = `${hostname}:${port}/${hash}`
-	res.json({ hash, shorterUrl, originalUrl })
-
+	const shorterURL = `${hostname}:${port}/${hash}`;
+	const newUrl = await URLModel.create({originalURL, hash, shorterURL});
+	
+	res.json(newUrl);
 });
 
-route.get('/:hash', (req: Request, res: Response) => {
+route.get('/:hash', async (req: Request, res: Response) => {
 	const hash = req.params.hash;
 
-	console.log(hash);
-	res.redirect("https://goyabu.com/assistir/mob-psycho-100-dublado/");
+	const url = await URLModel.findOne({ hash });
+	if(url) {
+		res.redirect(url.originalURL);
+		return
+	}
+
+	res.status(400).json({  error: "Url not found" });
 	
 });
 

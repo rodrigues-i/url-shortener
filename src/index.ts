@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
-require('dotenv').config()
+require('dotenv').config();
+import route from './routes/routes';
 
 
 const app = express();
@@ -10,9 +11,8 @@ const hostname = process.env.HOSTNAME;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req: Request, res: Response) => {
-	res.status(200).json({ message: "Welcome" })
-});
+// Configuraçoes de rotas
+app.use(route);
 
 // Inicialização do servidor
 app.listen(port, () => {

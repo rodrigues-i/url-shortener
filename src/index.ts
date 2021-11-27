@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 require('dotenv').config();
 import route from './routes/routes';
+import database from './database/MongoConnection';
 
 
 const app = express();
@@ -10,6 +11,9 @@ const hostname = process.env.HOSTNAME;
 // Configurações da aplicação
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Connect to the database
+database.connect();
 
 // Configuraçoes de rotas
 app.use(route);
